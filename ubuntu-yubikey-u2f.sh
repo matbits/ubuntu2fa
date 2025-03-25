@@ -34,6 +34,11 @@ fi
 
 echo "IMPORTANT this script will enable yubikey fido2 for login for user ${ENROLL_USER}"
 
+if [ $(id -u) -ne 0 ]
+  then echo Please run this script as root or using sudo!
+  exit 1
+fi
+
 read -p "Do you want to continue? (y/N) " SURE
 if [ "Y" != "$SURE" ] && [ "y" != "$SURE" ]; then
 	exit 1
@@ -56,6 +61,7 @@ echo "found yubikey at ${YUBIKEYDEV}"
 
 fido2-token -S -u "${YUBIKEYDEV}"
 
+echo "You may need to touch your yubikey if it blinks"
 pamu2fcfg -P -u "${ENROLL_USER}" > u2f_keys
 check_operation "Unable to create u2f file"
 
